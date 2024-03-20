@@ -172,18 +172,22 @@
               //const dataPtr = Module._malloc(data.length);
               //Module.HEAPU8.set(data, dataPtr);
               console.log(event.target.result.byteLength);
-              console.log(event.target.result);
+              //console.log(event.target.result);
               let data = new Uint8Array(event.target.result);
-              var string = new TextDecoder().decode(data);
-              console.log(string);
+              //var string = new TextDecoder().decode(data);
+              //console.log(string);
               let filename = 'sample_text';
               let stream = FS.open(filename, 'w+');
               FS.write(stream, data, 0, data.length, 0);
               FS.close(stream);
+              var startTime = performance.now()
               const result = processFile(filename);
+              var endTime = performance.now()
+
+              console.log(`Call to processFile took ${endTime - startTime} milliseconds`)
 
               var from_wasm_string = new TextDecoder().decode(data);
-              output.textContent = `Processed file size: ${from_wasm_string} bytes`;
+              output.textContent = `Processed file size: ${data.length} bytes`;
               //Module._free(dataPtr);
           };
           reader.readAsArrayBuffer(file);

@@ -1,5 +1,6 @@
 #include <emscripten/emscripten.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 int main() {
   printf("Hello World\n");
@@ -32,18 +33,21 @@ EXTERN EMSCRIPTEN_KEEPALIVE int process_file(char *filename) {
   fseek(in_file, 0L, SEEK_END);
   int sz = ftell(in_file);
   fseek(in_file, 0L, SEEK_SET);
-  char buffer[10000];
+  char *buffer = malloc(sizeof(char) * sz);
+
   fread(buffer, sizeof(char), sz, in_file);
-  printf("size\n");
 
   // Example processing: count the number of bytes
+  /*
   int count = 0;
   for (int i = 0; i < sz; i++) {
     count++;
     printf("%c", buffer[i]);
   }
+  */
+
   printf("\n");
-  return count * 2; // For this example, it just returns the size
+  return sz; // For this example, it just returns the size
 }
 
 // Create a new Point and return a pointer to it
