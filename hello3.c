@@ -23,12 +23,26 @@ EXTERN EMSCRIPTEN_KEEPALIVE void myFunction(int argc, char **argv) {
   printf("like bro Called %d\n", internal_sum(50, 234));
 }
 
-EXTERN EMSCRIPTEN_KEEPALIVE int process_file(const char *data, int size) {
+EXTERN EMSCRIPTEN_KEEPALIVE int process_file(char *filename) {
+  printf("trying to open %s\n", filename);
+  FILE *in_file = fopen(filename, "r"); // read only
+  if (in_file == NULL) {
+    printf("Error! Could not open file\n");
+  }
+  fseek(in_file, 0L, SEEK_END);
+  int sz = ftell(in_file);
+  fseek(in_file, 0L, SEEK_SET);
+  char buffer[10000];
+  fread(buffer, sizeof(char), sz, in_file);
+  printf("size\n");
+
   // Example processing: count the number of bytes
   int count = 0;
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < sz; i++) {
     count++;
+    printf("%c", buffer[i]);
   }
+  printf("\n");
   return count * 2; // For this example, it just returns the size
 }
 

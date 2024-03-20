@@ -152,7 +152,7 @@
       // Initialize the WASM module
       let processFile;
       Module.onRuntimeInitialized = function() {
-          processFile = Module.cwrap('process_file', 'number', ['number', 'number']);
+          processFile = Module.cwrap('process_file', 'number', ['string']);
       };
       const dropZone = document.getElementById('drop_zone');
       const output = document.getElementById('output');
@@ -172,8 +172,18 @@
               //const dataPtr = Module._malloc(data.length);
               //Module.HEAPU8.set(data, dataPtr);
               console.log(event.target.result.byteLength);
-              const result = processFile(event.target.result, event.target.result.byteLength);
-              output.textContent = `Processed file size: ${result} bytes`;
+              console.log(event.target.result);
+              let data = new Uint8Array(event.target.result);
+              var string = new TextDecoder().decode(data);
+              console.log(string);
+              let filename = 'sample_text';
+              let stream = FS.open(filename, 'w+');
+              FS.write(stream, data, 0, data.length, 0);
+              FS.close(stream);
+              const result = processFile(filename);
+
+              var from_wasm_string = new TextDecoder().decode(data);
+              output.textContent = `Processed file size: ${from_wasm_string} bytes`;
               //Module._free(dataPtr);
           };
           reader.readAsArrayBuffer(file);
